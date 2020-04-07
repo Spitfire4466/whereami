@@ -2,6 +2,9 @@
 // Streetview Map
 //
 
+var whoamiLocation;
+var panorama;
+
 function svinitialize() {
 
   console.log('No peaking!');
@@ -20,31 +23,26 @@ function svinitialize() {
   window.locLL = coordArrayLatLongs[0] + ',' + coordArrayLatLongs[1];
 
   // Do streetview
-  var whoamiLocation = new google.maps.LatLng(coordArrayLatLongs[0], coordArrayLatLongs[1]);
+  whoamiLocation = new google.maps.LatLng(coordArrayLatLongs[0], coordArrayLatLongs[1]);
+  
+  
   var streetViewService = new google.maps.StreetViewService();
   var STREETVIEW_MAX_DISTANCE = 100;
+	console.log(whoamiLocation)
+  panorama = new google.maps.StreetViewPanorama(document.getElementById('pano'));
+  streetViewService.getPanorama({location: whoamiLocation, radius: STREETVIEW_MAX_DISTANCE}, processSVData);
 
-  streetViewService.getPanoramaByLocation(whoamiLocation, STREETVIEW_MAX_DISTANCE, function(streetViewPanoramaData, status) {
-    if (status === google.maps.StreetViewStatus.OK) {
-
-      // We have a streetview pano for this location, so let's roll
-      var panoramaOptions = {
-        position: whoamiLocation,
-        addressControl: false,
-        linksControl: false,
-        pov: {
-          heading: 270,
-          zoom: 1,
-          pitch: -10
-        },
-        visible: true
-      };
-
-      var panorama = new google.maps.StreetViewPanorama(document.getElementById('pano'), panoramaOptions);
-
-    } else {
-      // no street view available in this range, or some error occurred
-      alert('Streetview is not available for this location :( Mind telling us that you saw this?');
-    }
-  });
 };
+function processSVData(data, status) {
+        if (status === 'OK') {
+        	panorama.setPano(data.location.pano);
+          	panorama.setPov({
+            	heading: 270,
+            	pitch: -10
+          	});
+          	panorama.setOptions({addressControl: false, enableCloseButton: false,linksControl: true, panControl: true, showRoadLabels: false})
+          	panorama.setZoom(1);
+          	panorama.setVisible(true);
+
+        }
+}

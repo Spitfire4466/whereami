@@ -38,8 +38,11 @@ function mminitialize() {
 
   // Mini map click
   google.maps.event.addListener(mMap, 'click', function(event) {
-    window.guessLatLng = event.latLng;
-    setGuessMarker(window.guessLatLng);
+  	if (!roundEndWindowOpen){
+    	window.guessLatLng = event.latLng;
+    	setGuessMarker(window.guessLatLng);
+    	document.getElementById("guessButton").disabled = false; 
+    }
   });
 
 };
